@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: transaction-deployment
+  namespace: eli-ns
+  labels:
+    app: transaction
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  selector:
+    matchLabels:
+      app: transaction
+  template:
+    metadata:
+      labels:
+        app: transaction
+    spec:
+      containers:
+        - name: transaction-container
+          image: muralisocial123/transaction-app:v1.0.0
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: transaction-service
+  namespace: eli-ns
+spec:
+  selector:
+    app: transaction
+  ports:
+    - port: 3001  # this is a service port number we're using to expose the application to the internet
+      targetPort: 3000
+      protocol: TCP
+  type: NodePort
+  

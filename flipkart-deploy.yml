@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flipkart-deployment
+  namespace: eli-ns
+  labels:
+    app: flipkart
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  selector:
+    matchLabels:
+      app: flipkart
+  template:
+    metadata:
+      labels:
+        app: flipkart
+    spec:
+      containers:
+        - name: flipkart-container
+          image: muralisocial123/flipkart-clone-kuberox:v1.1.0
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: flipkart-service
+  namespace: eli-ns
+spec:
+  selector:
+    app: flipkart
+  ports:
+    - port: 3001  # this is a service port number we're using to expose the application to the internet
+      targetPort: 80
+      protocol: TCP
+  type: NodePort
