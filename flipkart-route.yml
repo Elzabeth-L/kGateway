@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HttpRoute
+metadata:
+  name: flipkart-route
+  namespace: eli-ns
+spec:
+  parentRefs:
+  - name: ms-gateway
+  rules:
+  - matches:
+      - path:
+          type: PathPrefix
+          value: /
+    filters:
+      - type: URLRewrite
+        urlRewrite:
+          path:
+            type: ReplacePrefixMatch
+            replacePrefixMatch: /
+    backendRefs:
+      - name: flipkart-service
+        port: 3001
