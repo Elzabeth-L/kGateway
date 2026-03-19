@@ -14,7 +14,7 @@ spec:
       maxSurge: 25%
   selector:
     matchLabels:
-      app:ey
+      app: ey
   template:
     metadata:
       labels:
